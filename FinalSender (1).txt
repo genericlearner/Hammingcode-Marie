@@ -1,0 +1,232 @@
+﻿//The code is divided between two parts. 
+//First part is the function of the code. 
+//Second Part is reference for the definition of variables
+
+//Input
+//Start entering from Least significant to Most significant
+
+
+//Algorithm
+//The algorithm used for the code is to let the user enter the data bits, the parity bits are skipped using a function
+//All the bits for parity are added and produce a total for a parity bit
+//This total is dividied by two to check the parity for total(we subtract by 2 as theres no div)
+//The above calculation is performed until the value gets replaced by a negative number (will be either 0 or -1)
+//2 is added if its -1 for final time to produce parity, to make odd parity 1
+//performed for all parity bits
+
+//Output
+//The output starts with least significant bit to Most significant bit
+
+
+
+//Function
+
+clear        
+//data input through a loop
+Userinput,				LoadI arrayptr //array pointer points to the start of the array for bits
+						Skipcond 400
+                        Jump parityskipper //skips going to parity skipper if bit value is 0(data bit), parity bits are assigned a negative value
+						Input
+						StoreI arrayptr
+						Load arrayptr
+						Add one
+						Store arrayptr
+						Load counter
+						Add one
+						Store counter
+                        Subt sixteen
+						Skipcond 400
+                        Jump Userinput  	
+						Clear
+                        Jump Paritybit1
+                        
+parityskipper,			Load arrayptr //points the array pointer to next bit after parity bit
+						Add one
+						Store arrayptr
+                    	Jump Userinput	
+
+
+//Caculate parity 1st parity bit(bit 1)
+//Total calculation
+Paritybit1,				Clear
+						Add b3
+                        Add b5
+                        Add b7
+                        Add b9
+                        Add b11
+                        Add b13
+                        Add b15
+                        Add b17
+                        Add b19
+                        Add b21
+                    	Store total1
+                        
+//Finds the parity with algorithm for first parity bit      
+findparity1,			Load total1
+                		Skipcond 800
+                		Jump bit1store
+                		Subt two
+						Store total1
+                		Jump findparity1
+                        
+//Final step of adding 2 and storing bit
+
+bit1store,				Skipcond 400
+						Add two
+                        store b1
+						Clear
+//The same concept is applied for the rest of the parity bits   					
+
+
+//2nd parity bit (bit2)
+Paritybit2,				Clear
+						Add b3
+                        Add b6
+                        Add b7
+                        Add b10
+                        Add b11
+                        Add b14
+                        Add b15
+                        Add b18
+                        Add b19
+                        Store total2
+ //finds parity for parity                        
+findparity2,				Load total2
+                		Skipcond 800
+                		Jump bitstore2
+                		Subt two
+						Store total2
+                		Jump findparity2
+                        
+bitstore2,				Skipcond 400
+						Add two
+                        store b2
+						Clear
+//3rd parity bit (bit 4)
+Paritybit4,				Clear
+						Add b5
+                        Add b6
+                        Add b7
+                        Add b12
+                        Add b13
+                        Add b14
+                        Add b15
+                        Add b20
+                        Add b21
+                        Store total4
+                        
+findparity4,			Load total4
+                		Skipcond 800
+                		Jump storebit4
+                		Subt two
+						Store total4
+                		Jump findparity4
+                        
+storebit4,				Skipcond 400
+						Add two
+                        store b4
+						Clear                        
+//4th parity bit (bit 8)
+Paritybit8, 			Clear
+						Add b9
+                        Add b10
+                        Add b11
+                        Add b12
+                        Add b13
+                        Add b14
+                        Add b15
+                        Store total8
+                        
+findparity8,			Load total8
+                		Skipcond 800
+                		Jump storebit8
+                		Subt two
+						Store total8
+                		Jump findparity8
+                        
+storebit8,				Skipcond 400
+						Add two
+                        store b8
+						Clear   
+                        
+//5th parity bit (16 bit)
+Paritybit16,			Clear
+                        Add b17
+                        Add b18
+                        Add b19
+                        Add b20
+                        Add b21
+                        Store total16
+                        
+findparity16,			Load total16
+                		Skipcond 800
+                		Jump storebit16
+                		Subt two
+						Store total16
+                		Jump findparity16
+                        
+storebit16,				Skipcond 400
+						Add two
+                        store b16
+						Clear                       
+                        
+//Prints the saved bits, the read pointer points towards the first bit and loops through the array of bits 
+PrintOutput,			LoadI readpointer
+						Output
+                        Load readpointer
+						add one
+                        store readpointer
+						load readcounter
+						add one
+                        store readcounter
+						subt twentyone
+						Skipcond 000
+                        halt
+                        jump PrintOutput
+
+
+//Variables
+
+//numericals
+one,			DEC 1
+two,			DEC 2
+four,			DEC 4
+eight, 			DEC 8
+sixteen,		DEC 16
+twentyone,		DEC 21
+
+//variables
+counter,		DEC 0
+total1,			DEC 0 
+total2,			DEC 0
+total4,			DEC 0
+total8,			DEC 0
+total16,		DEC 0		
+readcounter,	DEC 0
+
+//pointers
+arrayptr,		JnS b1  
+readpointer,	JnS b1
+
+//bits
+b1,				DEC 1
+b2,				DEC 2
+b3,				DEC 0
+b4,				DEC 4
+b5,				DEC 0
+b6,				DEC 0
+b7,				DEC 0
+b8,				DEC 8
+b9,				DEC 0
+b10,			DEC 0
+b11,			DEC 0
+b12,			DEC 0
+b13,			DEC 0
+b14,			DEC 0
+b15,			DEC 0
+b16,			DEC 16
+b17,			DEC 0
+b18,			DEC 0	
+b19,			DEC 0
+b20,			DEC 0
+b21,			DEC 0

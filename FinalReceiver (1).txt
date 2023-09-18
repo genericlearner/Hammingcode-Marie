@@ -1,0 +1,321 @@
+﻿//The code is divided in two parts, the function and variable definition
+//To read variable definition, visit the end of the code
+//The first bit of output represents the error bit, the output below the first bit is the corrected code 
+
+//The parity calculation is adopted from sender program
+//The first bit of the output is the error position
+//the bits need to be entered from Least significant to most significant
+
+//The algorithm for error correction is to find even and odd parity bits
+//If the number of 1s is odd parity is 1 and if even parity is 0
+//We find the position of the error bit by adding the decimal value of all our parity bits.
+//For example: if our parity bits are 0 1 0 1 1, decimal value is 11, which is the error bit
+//The error bit is then flipped 
+
+
+//function
+clear                      
+Userinput,				Input
+						StoreI arrayptr //points to the first bit
+						Load arrayptr
+						Add one
+						Store arrayptr
+						Load counter
+						Add one
+						Store counter
+                        Subt twentyone
+						Skipcond 400
+                        Jump Userinput  
+                        jump Paritybit1				
+             	clear
+
+Paritybit1,				Clear//total of all of bits to calculate parity, the parity bits are also added
+						Add b1
+						Add b3
+                        Add b5
+                        Add b7
+                        Add b9
+                        Add b11
+                        Add b13
+                        Add b15
+                        Add b17
+                        Add b19
+                        Add b21
+                    	Store total1
+                        
+//Finds the parity with algorithm for first parity bit      
+findparity1,			Load total1
+                		Skipcond 800
+                		Jump bit1store
+                		Subt two
+						Store total1
+                		Jump findparity1
+                        
+//Final step of adding 2 and storing bit
+
+bit1store,				Skipcond 400
+						Add two
+                        store p1  //storing parity
+						Clear
+//The same concept is applied for the rest of the parity bits   					
+
+
+//2nd parity bit (bit2)
+Paritybit2,				Clear
+						Add b2
+						Add b3
+                        Add b6
+                        Add b7
+                        Add b10
+                        Add b11
+                        Add b14
+                        Add b15
+                        Add b18
+                        Add b19
+                        Store total2
+ //finds parity for parity                        
+findparity2,				Load total2
+                		Skipcond 800
+                		Jump bitstore2
+                		Subt two
+						Store total2
+                		Jump findparity2
+                        
+bitstore2,				Skipcond 400
+						Add two
+                        store p2 	//storing parity
+						Clear
+//3rd parity bit (bit 4)
+Paritybit4,				Clear
+						Add b4
+						Add b5
+                        Add b6
+                        Add b7
+                        Add b12
+                        Add b13
+                        Add b14
+                        Add b15
+                        Add b20
+                        Add b21
+                        Store total4
+                        
+findparity4,			Load total4
+                		Skipcond 800
+                		Jump storebit4
+                		Subt two
+						Store total4
+                		Jump findparity4
+                        
+storebit4,				Skipcond 400
+						Add two
+                        store p4	//storing parity
+						Clear                        
+//4th parity bit (bit 8)
+Paritybit8, 			Clear
+						Add b8
+						Add b9
+                        Add b10
+                        Add b11
+                        Add b12
+                        Add b13
+                        Add b14
+                        Add b15
+                        Store total8
+                        
+findparity8,			Load total8
+                		Skipcond 800
+                		Jump storebit8
+                		Subt two
+						Store total8
+                		Jump findparity8
+                        
+storebit8,				Skipcond 400
+						Add two
+                        store p8	//storing parity
+						Clear   
+                        
+//5th parity bit (16 bit)
+Paritybit16,			Clear
+						Add b16
+                        Add b17
+                        Add b18
+                        Add b19
+                        Add b20
+                        Add b21
+                        Store total16
+                        
+findparity16,			Load total16
+                		Skipcond 800
+                		Jump storebit16
+                		Subt two
+						Store total16
+                		Jump findparity16
+                        
+storebit16,				Skipcond 400
+						Add two
+                        store p16	//storing parity
+						Clear  
+                   
+//processing error     
+//performed chronologically as we add the decimal value for parity bit with value 1
+//The variable errorbit is the decimal value of the errorbit that is added each time when parity is odd
+errorprocessor, 		Load p1 
+						skipcond 400 //skips the calculation of decimal value for p1 if value is 0
+                        JnS pbit1corrector //jumps to decimal value calculation for first parity bit if value is 1
+                        load corrector1bit
+                        add errorbit 
+                        store errorbit    
+                         
+                        Load p2 
+						skipcond 400 //skips the calculation of decimal value for p2if value is 0
+                        JnS pbit2corrector	//jumps to decimal value calculation of parity bit if value is 1
+                        load corrector2bit 
+                        add errorbit 
+                        store errorbit 
+                         
+                        Load p4 
+						skipcond 400 //skips the calculation of decimal value for p4if value is 0
+                        JnS pbit4corrector	//jumps to decimal value calculation of parity bit if value is 1
+						load corrector4bit
+                        add errorbit 
+                        store errorbit 
+
+                        Load p8 
+						skipcond 400 //skips the calculation of decimal value for p8if value is 0
+                        JnS pbit8corrector	//jumps to decimal value calculation of parity bit if value is 1
+                        load corrector8bit
+                        add errorbit 
+                        store errorbit 
+                         
+                        Load p16 
+						skipcond 400 //skips the calculation of decimal value for p16 if value is 0
+                        JnS pbit16corrector	//jumps to decimal value calculation of parity bit if value is 1
+                        load corrector16bit
+                        add errorbit 
+                        store errorbit
+                        output
+                        jump corrector	//jumps to the function to flip error bit
+                        
+pbit1corrector,			HEX 000
+						load corrector1bit	
+						add one
+                        store corrector1bit
+                        JumpI pbit1corrector 	//calculates decimal value and goes back to the original position
+                        
+pbit2corrector,			HEX 222
+						load corrector2bit	
+						add two
+                        store corrector2bit
+                        JumpI pbit2corrector	//calculates decimal value and goes back to the original position
+                        
+pbit4corrector,			HEX 333
+						load corrector4bit	
+						add four
+                        store corrector4bit
+                        JumpI pbit4corrector	//calculates decimal value and goes back to the original position
+                        
+pbit8corrector,			HEX 444
+						load corrector8bit	
+						add eight
+                        store corrector8bit
+                        JumpI pbit8corrector	//calculates decimal value and goes back to the original position
+                        
+pbit16corrector,		HEX 555
+						load corrector16bit	
+						add sixteen
+                        store corrector16bit
+                        JumpI pbit16corrector	//calculates decimal value and goes back to the original position
+                        
+corrector,				Load correctpointer
+						subt one	//calibrates the corrector pointer (points one position ahead of bit1 so that errorbit it added)
+						add errorbit
+                        store correctpointer                      
+						LoadI correctpointer
+						skipcond 400
+                        jump ifparity1 //jumps to this function if bit is 1
+                        add one 
+                        storeI correctpointer //flips the bit and stores it
+                        jump PrintOutput
+
+ifparity1,				LoadI correctpointer
+						subt one
+                        storeI correctpointer
+                        jump PrintOutput //function if bit is 1 and need to flip it
+                        
+PrintOutput,			LoadI readpointer
+						Output
+                        Load readpointer
+						add one
+                        store readpointer
+						load readcounter
+						add one
+                        store readcounter
+						subt twentyone
+						Skipcond 000
+                        halt
+                        jump PrintOutput
+                        
+                        
+//variables
+
+//numericals
+one,			DEC 1
+two,			DEC 2
+four,			DEC 4
+eight,			DEC 8
+sixteen,		DEC 16
+twentyone,		DEC 21
+
+//parity bits
+p1,				DEC 0
+p2, 			DEC 0
+p4,				DEC 0	
+p8, 			DEC 0
+p16,			DEC 0
+
+		
+//correcting bits
+errorbit,		DEC 0
+corrector1bit,	DEC 0
+corrector2bit,	DEC 0
+corrector4bit,	DEC 0
+corrector8bit,	DEC 0
+corrector16bit,	DEC 0
+
+arrayptr,		JnS b1  
+readpointer,	JnS b1
+correctpointer, JnS b1
+
+//variables
+counter,		DEC 0
+total1,			DEC 0 
+total2,			DEC 0
+total4,			DEC 0
+total8,			DEC 0
+total16,		DEC 0		
+readcounter,	DEC 0
+
+
+//bits
+b1,				DEC 1
+b2,				DEC 2
+b3,				DEC 0
+b4,				DEC 4
+b5,				DEC 0
+b6,				DEC 0
+b7,				DEC 0
+b8,				DEC 8
+b9,				DEC 0
+b10,			DEC 0
+b11,			DEC 0
+b12,			DEC 0
+b13,			DEC 0
+b14,			DEC 0
+b15,			DEC 0
+b16,			DEC 16
+b17,			DEC 0
+b18,			DEC 0	
+b19,			DEC 0
+b20,			DEC 0
+b21,			DEC 0
+                        
